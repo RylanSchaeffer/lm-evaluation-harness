@@ -201,7 +201,7 @@ class QASPER(Task):
             "f1_abstractive": mean,
         }
     
-    def construct_requests(self, doc, ctx, decoding_kwargs):
+    def construct_requests_args(self, doc, ctx, decoding_kwargs):
         """Uses RequestFactory to construct Requests and returns an iterable of
         Requests which will be sent to the LM.
 

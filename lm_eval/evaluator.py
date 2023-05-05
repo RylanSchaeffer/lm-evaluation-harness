@@ -220,7 +220,7 @@ def evaluate(
             )
 
             if decoding_kwargs:
-                reqs = task.construct_requests(doc, ctx, decoding_kwargs)
+                reqs = task.construct_requests_args(doc, ctx, decoding_kwargs)
             else:
                 reqs = task.construct_requests(doc, ctx)
 
