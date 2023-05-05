@@ -88,6 +88,26 @@ class LM(abc.ABC):
         """
         pass
 
+    # Just copied abstract greedy_until
+    # TODO: Add an optional max length
+    @abstractmethod
+    def decode_until(self, requests, decoding_kwargs):
+        """Generate greedily until a stopping sequence
+
+        :param requests: list
+            A list of pairs (context, until)
+            context: str
+                Context string
+            until: [str]
+                The string sequences to generate until. These string sequences
+                may each span across multiple tokens, or may be part of one token.
+        :return: list
+            A list of strings continuation
+            continuation: str
+                The generated continuation.
+        """
+        pass
+
     # TODO: Add an optional max length
     @abstractmethod
     def greedy_until(self, requests):
