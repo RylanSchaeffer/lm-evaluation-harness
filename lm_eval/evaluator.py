@@ -23,6 +23,7 @@ def simple_evaluate(
     description_dict=None,
     check_integrity=False,
     decontamination_ngrams_path=None,
+    decoding_kwargs=None
 ):
 
     """Instantiate and evaluate a model on a list of tasks.
@@ -91,6 +92,7 @@ def simple_evaluate(
         bootstrap_iters=bootstrap_iters,
         description_dict=description_dict,
         decontamination_ngrams_path=decontamination_ngrams_path,
+        decoding_kwargs=decoding_kwargs
     )
 
     # add info about the model and few shot config
@@ -122,6 +124,7 @@ def evaluate(
     bootstrap_iters=100000,
     description_dict=None,
     decontamination_ngrams_path=None,
+    decoding_kwargs=None
 ):
     """Instantiate and evaluate a model on a list of tasks.
 
@@ -215,7 +218,12 @@ def evaluate(
             ctx = task.fewshot_context(
                 doc=doc, num_fewshot=num_fewshot, rnd=rnd, description=description
             )
-            reqs = task.construct_requests(doc, ctx)
+
+            if decoding_kwargs:
+                reqs = task.construct_requests(doc, ctx, decoding_kwargs)
+            else:
+                reqs = task.construct_requests(doc, ctx)
+
             if not isinstance(reqs, (list, tuple)):
                 reqs = [reqs]
             for i, req in enumerate(reqs):

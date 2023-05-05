@@ -368,6 +368,53 @@ class BaseLM(LM):
 
         return re_ord.get_original(res)
 
+    def decode_until(self, requests, decoding_kwargs):
+        # This is a direct copy from greedy_until with added decoding_kwargs
+        # TODO: implement fully general `until` that handles until that are
+        #       multiple tokens or that span multiple tokens correctly
+
+        # TODO: extract to TokenizedLM?
+        res = []
+
+        def _collate(x):
+            toks = self.tok_encode(x[0])
+            return len(toks), x[0]
+
+        re_ord = utils.Reorderer(requests, _collate)
+
+        for context, request_args in tqdm(re_ord.get_reordered()):
+            until = request_args['until']
+            if isinstance(until, str):
+                until = [until]
+
+            if until:
+                (primary_until,) = self.tok_encode(until[0])
+            else:
+                primary_until = None
+
+            context_enc = torch.tensor(
+                [self.tok_encode(context)[self.max_gen_toks - self.max_length :]]
+            ).to(self.device)
+
+            max_gen_tokens = min(
+                self.max_gen_toks, request_args.get('max_length', self.max_gen_toks)
+            )
+            cont = self._model_generate_args(
+                context_enc, context_enc.shape[1] + max_gen_tokens, primary_until, decoding_kwargs
+            )
+
+            s = self.tok_decode(cont[0].tolist()[context_enc.shape[1] :])
+
+            for term in until:
+                s = s.split(term)[0]
+
+            # partial caching
+            self.cache_hook.add_partial("greedy_until", (context, until), s)
+
+            res.append(s)
+
+        return re_ord.get_original(res)
+
     def greedy_until(self, requests):
         # TODO: implement fully general `until` that handles until that are
         #       multiple tokens or that span multiple tokens correctly
