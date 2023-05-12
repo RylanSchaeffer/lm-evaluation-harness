@@ -495,6 +495,7 @@ class AutoCausalLM(HuggingFaceAutoLM):
             max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
             do_sample=False,
+            num_beams=10
         )
         return utils.select_continuation_from_batch_left_padding(
             generations, max_context_size=inputs["input_ids"].size(1)
@@ -665,6 +666,7 @@ class AutoSeq2SeqLM(HuggingFaceAutoLM):
             max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
             do_sample=False,
+            num_beams=10
         )
         return generations
 
