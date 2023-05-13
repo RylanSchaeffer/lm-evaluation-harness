@@ -40,6 +40,8 @@ def parse_args():
     parser.add_argument("--decontamination_ngrams_path", default=None)
     parser.add_argument("--description_dict_path", default=None)
     parser.add_argument("--check_integrity", action="store_true")
+    parser.add_argument("--decode_strat", default=None, choices=MultiChoice(["top_k", "top_p", "beam", "sample"]))
+    parser.add_argument("--decode_param", default=None) # e.g. beam_size, k, p, num_samples
 
     return parser.parse_args()
 
@@ -76,6 +78,20 @@ def main():
         with open(args.description_dict_path, "r") as f:
             description_dict = json.load(f)
 
+    decoding_kwargs = {}
+    if args.decode_strat and args.decode_param:
+        # Set kwargs based on args
+        if args.decode_strat == "top_k":
+            decoding_kwargs["do_sample"] = True
+            decoding_kwargs["top_k"] = args.decode_param
+        elif args.decode_strat == "top_p":
+            decoding_kwargs["do_sample"] = True
+            decoding_kwargs["top_p"] = args.decode_param
+        elif args.decode_strat == "sample":
+            decoding_kwargs["do_sample"] = True
+        elif args.decode_strat == "beam":
+            decoding_kwargs["num_beams"] = args.decode_param
+
     results = evaluator.simple_evaluate(
         model=args.model,
         model_args=args.model_args,
@@ -88,6 +104,7 @@ def main():
         description_dict=description_dict,
         decontamination_ngrams_path=args.decontamination_ngrams_path,
         check_integrity=args.check_integrity,
+        decoding_kwargs=decoding_kwargs,
     )
 
     dumped = json.dumps(results, indent=2)
