@@ -80,7 +80,7 @@ def main():
 
     decoding_kwargs = {}
     if args.decode_strat and args.decode_param:
-        # Set kwargs based on args
+        # Set decoding_kwargs based on args
         if args.decode_strat == "top_k":
             decoding_kwargs["do_sample"] = True
             decoding_kwargs["top_k"] = args.decode_param

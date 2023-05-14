@@ -423,6 +423,7 @@ class HuggingFaceAutoLM(BaseLM):
                 inputs=token_context,
                 max_tokens=max_tokens,
                 stop=until,
+                decoding_kwargs=request_args.get("decoding_kwargs", {}),
             )
             responses = self.tok_decode(responses.tolist())
 
@@ -472,6 +473,7 @@ class AutoCausalLM(HuggingFaceAutoLM):
         inputs: transformers.BatchEncoding,
         max_tokens: int,
         stop: Optional[List[str]] = None,
+        decoding_kwargs: Optional[dict] = None,
     ) -> TokenSequence:
         # Ensure that the context does not encroach into the `space`
         # for the generation.
@@ -494,7 +496,7 @@ class AutoCausalLM(HuggingFaceAutoLM):
             # of new tokens to generate, excluding the current number of tokens.
             max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
-            do_sample=False,
+            **decoding_kwargs if decoding_kwargs is not None else {},
         )
         return utils.select_continuation_from_batch_left_padding(
             generations, max_context_size=inputs["input_ids"].size(1)
@@ -641,6 +643,7 @@ class AutoSeq2SeqLM(HuggingFaceAutoLM):
         inputs: transformers.BatchEncoding,
         max_tokens: int,
         stop: Optional[List[str]] = None,
+        decoding_kwargs: Optional[dict] = None,
     ) -> TokenSequence:
         input_ids = inputs["input_ids"][:, -self.max_length :].to(self.device)
         attention_mask = inputs["attention_mask"][:, -self.max_length :].to(self.device)
@@ -664,7 +667,7 @@ class AutoSeq2SeqLM(HuggingFaceAutoLM):
             attention_mask=attention_mask,
             max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
-            do_sample=False,
+            **decoding_kwargs if decoding_kwargs is not None else {},
         )
         return generations
 

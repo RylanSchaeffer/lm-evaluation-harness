@@ -151,6 +151,6 @@ class TextSynthLM(BaseLM):
         # Isn't used because we override _loglikelihood_tokens
         raise NotImplementedError()
 
-    def _model_generate(self, context, max_length, eos_token_id):
+    def _model_generate(self, context, max_length, eos_token_id, decoding_kwargs):
         # Isn't used because we override greedy_until
         raise NotImplementedError()

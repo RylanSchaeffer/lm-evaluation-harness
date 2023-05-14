@@ -153,7 +153,7 @@ class BaseLM(LM):
         pass
 
     @abstractmethod
-    def _model_generate(self, context, max_length, eos_token_id):
+    def _model_generate(self, context, max_length, eos_token_id, decoding_kwargs):
         pass
 
     @abstractmethod
@@ -383,6 +383,7 @@ class BaseLM(LM):
 
         for context, request_args in tqdm(re_ord.get_reordered()):
             until = request_args['until']
+            decoding_kwargs = request_args.get('decoding_kwargs', {})
             if isinstance(until, str):
                 until = [until]
 
@@ -399,7 +400,7 @@ class BaseLM(LM):
                 self.max_gen_toks, request_args.get('max_length', self.max_gen_toks)
             )
             cont = self._model_generate(
-                context_enc, context_enc.shape[1] + max_gen_tokens, primary_until
+                context_enc, context_enc.shape[1] + max_gen_tokens, primary_until, decoding_kwargs
             )
 
             s = self.tok_decode(cont[0].tolist()[context_enc.shape[1] :])
