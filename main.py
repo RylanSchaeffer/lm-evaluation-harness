@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 import fnmatch
+import wandb
 
 from lm_eval import tasks, evaluator
 
@@ -92,6 +93,16 @@ def main():
         elif args.decode_strat == "beam":
             decoding_kwargs["num_beams"] = int(args.decode_param)
 
+    wandb.init(
+        project='lm-ei',
+        config={
+            'decoding_method': args.decode_strat,
+            'params': args.decode_param,
+            'task': args.tasks,
+            'model': args.model
+        }
+    )
+
     results = evaluator.simple_evaluate(
         model=args.model,
         model_args=args.model_args,
@@ -106,6 +117,8 @@ def main():
         check_integrity=args.check_integrity,
         decoding_kwargs=decoding_kwargs,
     )
+
+    wandb.log({'results': results})
 
     dumped = json.dumps(results, indent=2)
     print(dumped)
