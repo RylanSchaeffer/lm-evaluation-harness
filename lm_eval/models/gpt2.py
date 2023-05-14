@@ -117,9 +117,12 @@ class HFLM(BaseLM):
 
     def _model_generate(self, context, max_length, eos_token_id, decoding_kwargs):
         decoding_kwargs['max_length'] = max_length
+
         if eos_token_id is not None:
             decoding_kwargs['eos_token_id'] = eos_token_id
-        return self.gpt2.generate(context, **decoding_kwargs)
+            decoding_kwargs['pad_token_id'] = eos_token_id
+        attention_mask = (context != eos_token_id).long()
+        return self.gpt2.generate(context, attention_mask=attention_mask, **decoding_kwargs)
 
 
 # for backwards compatibility
