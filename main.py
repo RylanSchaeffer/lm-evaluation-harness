@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument("--description_dict_path", default=None)
     parser.add_argument("--check_integrity", action="store_true")
     parser.add_argument("--decode_strat", default=None, choices=MultiChoice(["top_k", "top_p", "beam", "sample"]))
-    parser.add_argument("--decode_param", default=None) # e.g. beam_size, k, p, num_samples
+    parser.add_argument("--decode_param", type=float, default=None) # e.g. beam_size, k, p, num_samples
 
     return parser.parse_args()
 
