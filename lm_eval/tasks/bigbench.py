@@ -81,6 +81,19 @@ class BigBenchJsonTask(Task):
             return list(doc["target_scores"].keys())
         return doc["target"] if isinstance(doc["target"], list) else [doc["target"]]
 
+    def construct_requests_args(self, doc, ctx, decoding_kwargs):
+        requests = []
+        if self._has_multi_choice:
+            queries = self._doc_to_queries(doc)
+            requests += [
+                rf.loglikelihood(ctx, continuation)[0] for continuation in queries
+            ]
+        if self._has_generative:
+            requests.append(
+                rf.greedy_until(ctx, {"until": [], "max_length": self.max_length, "decoding_kwargs": decoding_kwargs})
+            )
+        return requests
+
     def construct_requests(self, doc, ctx):
         requests = []
         if self._has_multi_choice:

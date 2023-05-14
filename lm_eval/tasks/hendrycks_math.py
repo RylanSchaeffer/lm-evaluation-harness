@@ -62,6 +62,9 @@ class Math(Task):
     def doc_to_target(self, doc):
         return " " + doc["solution"]
 
+    def construct_requests_args(self, doc, ctx, decoding_kwargs):
+        return rf.greedy_until(ctx, {'until': ["\n"], 'decoding_kwargs': decoding_kwargs})
+
     def construct_requests(self, doc, ctx):
         return rf.greedy_until(ctx, {'until': ["\n"]})
 

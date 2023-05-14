@@ -58,6 +58,10 @@ class WordUnscrambleTask(Task):
     def doc_to_target(self, doc):
         return doc["completion"]
 
+    def construct_requests_args(self, doc, ctx, decoding_kwargs):
+        completion = rf.greedy_until(ctx, {'until': ["\n"], 'decoding_kwargs': decoding_kwargs})
+        return completion
+
     def construct_requests(self, doc, ctx):
         completion = rf.greedy_until(ctx, {'until': ["\n"]})
         return completion
