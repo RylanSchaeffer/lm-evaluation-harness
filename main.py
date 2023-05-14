@@ -83,14 +83,14 @@ def main():
         # Set decoding_kwargs based on args
         if args.decode_strat == "top_k":
             decoding_kwargs["do_sample"] = True
-            decoding_kwargs["top_k"] = args.decode_param
+            decoding_kwargs["top_k"] = int(args.decode_param)
         elif args.decode_strat == "top_p":
             decoding_kwargs["do_sample"] = True
             decoding_kwargs["top_p"] = args.decode_param
         elif args.decode_strat == "sample":
             decoding_kwargs["do_sample"] = True
         elif args.decode_strat == "beam":
-            decoding_kwargs["num_beams"] = args.decode_param
+            decoding_kwargs["num_beams"] = int(args.decode_param)
 
     results = evaluator.simple_evaluate(
         model=args.model,
