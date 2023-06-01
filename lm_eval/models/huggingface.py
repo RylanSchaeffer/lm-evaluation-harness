@@ -192,7 +192,7 @@ class HuggingFaceAutoLM(BaseLM):
         model_kwargs["load_in_8bit"] = load_in_8bit
         self.model = self._create_auto_model(
             pretrained=pretrained,
-            trust_remote_code=trust_remote_code,
+            trust_remote_code=True,
             revision=revision,
             subfolder=subfolder,
             torch_dtype=_get_dtype(dtype, self._config),
