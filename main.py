@@ -43,6 +43,7 @@ def parse_args():
     parser.add_argument("--check_integrity", action="store_true")
     parser.add_argument("--decode_strat", default=None, choices=MultiChoice(["top_k", "top_p", "beam", "sample"]))
     parser.add_argument("--decode_param", type=float, default=None) # e.g. beam_size, k, p, num_samples
+    parser.add_argument("--wandb_dir", default=None)
 
     return parser.parse_args()
 
@@ -94,6 +95,7 @@ def main():
             decoding_kwargs["num_beams"] = int(args.decode_param)
 
     wandb.init(
+        dir= args.wandb_dir,
         project='lm-ei',
         config={
             'decoding_method': args.decode_strat,
