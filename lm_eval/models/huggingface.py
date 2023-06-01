@@ -168,7 +168,7 @@ class HuggingFaceAutoLM(BaseLM):
         self._max_length = max_length
         self._config = self.AUTO_CONFIG_CLASS.from_pretrained(
             pretrained,
-            trust_remote_code=trust_remote_code,
+            trust_remote_code=True,
             revision=revision + ("/" + subfolder if subfolder is not None else ""),
         )
 
@@ -241,7 +241,7 @@ class HuggingFaceAutoLM(BaseLM):
             max_memory=max_memory,
             offload_folder=offload_folder,
             load_in_8bit=load_in_8bit,
-            trust_remote_code=trust_remote_code,
+            trust_remote_code=True,
             torch_dtype=torch_dtype,
         )
         return model
@@ -268,7 +268,7 @@ class HuggingFaceAutoLM(BaseLM):
             max_memory=max_memory,
             offload_folder=offload_folder,
             load_in_8bit=load_in_8bit,
-            trust_remote_code=trust_remote_code,
+            trust_remote_code=True,
             torch_dtype=torch_dtype,
         )
         return model
@@ -285,6 +285,7 @@ class HuggingFaceAutoLM(BaseLM):
         tokenizer = self.AUTO_TOKENIZER_CLASS.from_pretrained(
             pretrained if tokenizer is None else tokenizer,
             revision=revision + ("/" + subfolder if subfolder is not None else ""),
+            trust_remote_code=True,
         )
         tokenizer.pad_token = tokenizer.eos_token
         return tokenizer
