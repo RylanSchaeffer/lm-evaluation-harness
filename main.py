@@ -43,6 +43,7 @@ def parse_args():
     parser.add_argument("--check_integrity", action="store_true")
     parser.add_argument("--decode_strat", default=None, choices=MultiChoice(["top_k", "top_p", "beam", "sample"]))
     parser.add_argument("--decode_param", type=float, default=None) # e.g. beam_size, k, p, num_samples
+    parser.add_argument("--num_samples", type=int, default=None)
     parser.add_argument("--wandb_dir", default=None)
 
     return parser.parse_args()
@@ -93,6 +94,10 @@ def main():
             decoding_kwargs["do_sample"] = True
         elif args.decode_strat == "beam":
             decoding_kwargs["num_beams"] = int(args.decode_param)
+
+        if args.num_samples is not None:
+            decoding_kwargs["num_beams"] = args.num_samples
+            decoding_kwargs["do_sample"] = True
 
     wandb.init(
         dir= args.wandb_dir,
