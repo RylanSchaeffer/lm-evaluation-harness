@@ -205,12 +205,12 @@ class _bootstrap_internal:
 
 
 def bootstrap_stderr(f, xs, iters):
-    import multiprocessing as mp
-    import os
+    # import multiprocessing as mp
+    # import os
 
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    # os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-    pool = mp.Pool(mp.cpu_count())
+    # pool = mp.Pool(mp.cpu_count())
 
     # this gives a biased estimate of the stderr (i.e w/ the mean, it gives something
     # equivalent to stderr calculated without Bessel's correction in the stddev.
@@ -224,7 +224,7 @@ def bootstrap_stderr(f, xs, iters):
 
     print("bootstrapping for stddev:", f.__name__)
     for bootstrap in tqdm(
-        pool.imap(
+        map(
             _bootstrap_internal(f, chunk_size),
             [(i, xs) for i in range(iters // chunk_size)],
         ),
@@ -233,7 +233,7 @@ def bootstrap_stderr(f, xs, iters):
         # sample w replacement
         res.extend(bootstrap)
 
-    pool.close()
+    # pool.close()
     return sample_stddev(res)
 
 
